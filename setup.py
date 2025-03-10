@@ -6,15 +6,15 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="two4two",
-    version="0.0.4",
-    author="Martin Schuessler, Leon Sixt, Philipp Weiss",
-    author_email="dev@mschuessler.de",
-    description="Generate biased image data to train and test classifiers.",
+    name="blockies",
+    version="0.0.1",
+    author="David S. Johnson",
+    author_email="djohnson@techfak.uni-bielefeld.de",
+    description="Generate diagnostic based dataset for application-grounded assessment of human-ai collaboration.",
     license='MIT',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mschuessler/two4two",
+    url="https://github.com/davidsjohnson/blockies-haic",
     packages=setuptools.find_packages(),
     package_data={
         "": ["*.sh"],
@@ -22,7 +22,7 @@ setuptools.setup(
     },
     entry_points={
         'console_scripts': [
-            'two4two_render_dataset=two4two.cli_tool:render_dataset',
+            'blockies_render_dataset=blockies.cli_tool:render_dataset',
         ],
     },
     classifiers=[
@@ -66,5 +66,5 @@ setuptools.setup(
             'livelossplot'
         ]
     },
-    python_requires='>=3.7'
+    python_requires='>=3.10'
 )
