@@ -4,7 +4,7 @@
 sampler = 'two4two.ijcai25.blockies_bias.Sampler'
 
 # Save dataset to this directory.
-output_dir = 'two4two_datasets/blockies_v3_2class_normal'
+output_dir = 'blockies_datasets/blockies_v3_2class_normal'
 
 # Should be an existing output_dir be overwritten? [Default: false]
 force_overwrite = true
@@ -34,7 +34,7 @@ n_samples = 3000
 sampler = 'two4two.ijcai25.blockies_bias.HighVariationSampler'
 
 # Save dataset to this directory.
-output_dir = 'two4two_datasets/blockies_v3_2class_variation'
+output_dir = 'blockies_datasets/blockies_v3_2class_variation'
 
 # Should be an existing output_dir be overwritten? [Default: false]
 force_overwrite = true
