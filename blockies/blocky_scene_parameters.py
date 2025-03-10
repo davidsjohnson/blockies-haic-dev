@@ -13,8 +13,8 @@ import pprint
 from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
 import uuid
 
-from two4two import utils
-from two4two.scene_parameters import SceneParameters
+from blockies import utils
+from blockies.scene_parameters import SceneParameters
 
 
 OBJ_NAME_TO_INT = {

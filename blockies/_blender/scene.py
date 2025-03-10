@@ -9,10 +9,10 @@ import imageio
 import numpy as np
 from skimage import color
 
-from two4two import scene_parameters
-from two4two import utils
-from two4two._blender import blender_object
-from two4two._blender import butils
+from blockies import scene_parameters
+from blockies import utils
+from blockies._blender import blender_object
+from blockies._blender import butils
 
 
 class Scene():

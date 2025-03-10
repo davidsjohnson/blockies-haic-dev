@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 
-from two4two import utils
-from two4two.blocky_scene_parameters import BlockySceneParameters
+from blockies import utils
+from blockies.blocky_scene_parameters import BlockySceneParameters
 
 
 _Continuous = Union[scipy.stats.rv_continuous, Callable[[], float], float]

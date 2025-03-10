@@ -1,6 +1,6 @@
 """render sample comand line tool.
 
-This is invoked interally by ``two4two.blender.render``.
+This is invoked interally by ``blockies.blender.render``.
 """
 
 
@@ -19,8 +19,8 @@ package_base_dir = str(Path(__file__).parents[2])
 if package_base_dir not in sys.path:
     sys.path.append(package_base_dir)
 
-from two4two._blender.scene import Scene  # noqa: E402
-from two4two.scene_parameters import SceneParameters  # noqa: E402
+from blockies._blender.scene import Scene  # noqa: E402
+from blockies.scene_parameters import SceneParameters  # noqa: E402
 
 
 def _render_files(param_file: str, save_location: str, save_blender_file: str):

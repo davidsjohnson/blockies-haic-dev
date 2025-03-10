@@ -14,8 +14,8 @@ from typing import Any, Optional, Tuple
 import toml
 import tqdm
 
-import two4two
-from two4two import utils
+import blockies
+from blockies import utils
 
 
 @dataclasses.dataclass(frozen=True)
@@ -23,7 +23,7 @@ class RenderSplitArgs:
     """Comand line arguments.
 
     Args:
-        sampler: module and class of the sample (e.g `two4two.Sampler`)
+        sampler: module and class of the sample (e.g `Blockies.Sampler`)
         n_samples: number of samples to draw
         output_dir: save split to this directory
         force_overwrite: overwrite existing directory
@@ -47,9 +47,9 @@ class RenderSplitArgs:
 def render_dataset_split(args: RenderSplitArgs):
     """Samples and renders a single split of the dataset."""
     sampler_cls = utils.import_class(*utils.split_class(args.sampler))
-    sampler: two4two.Sampler = sampler_cls()
+    sampler: blockies.Sampler = sampler_cls()
 
-    two4two.blender.ensure_blender_available(args.blender_dir, args.download_blender)
+    blockies.blender.ensure_blender_available(args.blender_dir, args.download_blender)
 
     print("Sampling Parameters...")
     params = [sampler.sample() for _ in tqdm.trange(args.n_samples)]
@@ -76,7 +76,7 @@ def render_dataset_split(args: RenderSplitArgs):
         json.dump(dataclasses.asdict(args), f_json)
 
     print(f"Rendering {len(params)} images...")
-    for _ in tqdm.tqdm(two4two.render(
+    for _ in tqdm.tqdm(blockies.render(
         params,
         n_processes=args.n_processes,
         output_dir=args.output_dir,

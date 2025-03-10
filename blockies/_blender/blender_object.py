@@ -1,4 +1,4 @@
-"""module for the blender object of Peaky and Stretechy."""
+"""module for the blender object."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ import bpy
 from mathutils import Vector
 import numpy as np
 
-from two4two._blender import butils
-import two4two.utils
+from blockies._blender import butils
+import blockies.utils
 
 
 @dataclasses.dataclass
@@ -341,7 +341,7 @@ class Two4TwoBlenderObject():
         bpy.ops.transform.translate(value=-0.5 * global_bbox_center)
         self.remove_bounding_box()
 
-    def add_material(self, color: two4two.utils.RGBAColor):
+    def add_material(self, color: blockies.utils.RGBAColor):
         """Sets the color to all blocks."""
         for name in self.blocks:
             active_object = butils.set_active(name)

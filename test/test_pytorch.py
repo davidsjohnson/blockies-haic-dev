@@ -6,8 +6,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-import two4two
-import two4two.pytorch
+import blockies
+import blockies.pytorch
 
 
 def test_pytorch_dataloader(tmp_path: Path):
@@ -15,26 +15,26 @@ def test_pytorch_dataloader(tmp_path: Path):
     print("test temp dir: ", tmp_path)
     np.random.seed(242)
 
-    sampler = two4two.Sampler()
+    sampler = blockies.Sampler()
     sampled_params = [sampler.sample() for _ in range(2)]
 
     (tmp_path / 'train').mkdir()
 
-    for _ in two4two.render(
+    for _ in blockies.render(
         sampled_params,
         n_processes=1,
         output_dir=str(tmp_path / 'train'),
     ):
         pass
 
-    dataset = two4two.pytorch.Two4Two(str(tmp_path), split='train')
+    dataset = blockies.pytorch.Two4Two(str(tmp_path), split='train')
 
     df = dataset.get_dataframe()
     assert df.obj_name[0] == sampled_params[0].obj_name
     assert df.obj_name[1] == sampled_params[1].obj_name
     assert "resolution" not in set(df.keys())
 
-    df = dataset.get_dataframe(to_dict=two4two.pytorch.all_attributes)
+    df = dataset.get_dataframe(to_dict=blockies.pytorch.all_attributes)
     assert df.attribute_status_obj_name[0] == "sampled"
     assert df.attribute_status_obj_name[1] == "sampled"
 

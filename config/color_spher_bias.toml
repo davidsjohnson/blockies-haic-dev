@@ -1,10 +1,10 @@
 [spherical_color_bias]
 # Class of the sampler. Must be of the form "your.module.YourSampler".
 # The module must be importable from the current enviroment.
-sampler = 'two4two.bias.MedVarSpherColorSampler'
+sampler = 'blockies.bias.MedVarSpherColorSampler'
 
 # Save dataset to this directory.
-output_dir = 'two4two_datasets/spherical_color_bias'
+output_dir = 'blockies/spherical_color_bias'
 
 # Should be an existing output_dir be overwritten? [Default: false]
 force_overwrite = false
@@ -30,8 +30,8 @@ n_samples = 500
 
 
 [no_arms]
-sampler = 'two4two.bias.MedVarNoArmsSampler'
-output_dir = 'two4two_datasets/no_arms'
+sampler = 'blockies.bias.MedVarNoArmsSampler'
+output_dir = 'blockies_datasets/no_arms'
 n_processes = 6
 
 [no_arms.train]
@@ -44,8 +44,8 @@ n_samples = 3_000
 n_samples = 500
 
 [no_bias]
-sampler = 'two4two.bias.MedVarSampler'
-output_dir = 'two4two_datasets/no_bias'
+sampler = 'blockies.bias.MedVarSampler'
+output_dir = 'blockies_datasets/no_bias'
 n_processes = 6
 
 [no_bias.train]
@@ -59,8 +59,8 @@ n_samples = 500
 
 
 [spherical_bias]
-sampler = 'two4two.bias.MedVarSpherSampler'
-output_dir = 'two4two_datasets/spherical_bias'
+sampler = 'blockies.bias.MedVarSpherSampler'
+output_dir = 'blockies_datasets/spherical_bias'
 n_processes = 6
 
 [spherical_bias.train]
@@ -74,8 +74,8 @@ n_samples = 500
 
 
 [color_bias]
-sampler = 'two4two.bias.MedVarColorSampler'
-output_dir = 'two4two_datasets/color_bias'
+sampler = 'blockies.bias.MedVarColorSampler'
+output_dir = 'blockies_datasets/color_bias'
 n_processes = 6
 
 [color_bias.train]

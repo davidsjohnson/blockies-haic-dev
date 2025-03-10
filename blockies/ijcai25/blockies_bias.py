@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 
-from two4two import utils
-from two4two.ijcai25.blockies_scene_parameters import SceneParameters
+from blockies import utils
+from blockies.ijcai25.blockies_scene_parameters import SceneParameters
 
 
 _Continouos = Union[scipy.stats.rv_continuous, Callable[[], float], float]
