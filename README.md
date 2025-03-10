@@ -1,20 +1,22 @@
 # Blockies: An application-grounded framework for assessing healthy trust in high-stakes human-AI collaboration
 
 ## Introduction
-**Blockies** is a parametric dataset generator, based on the [Two4Two library](https://github.com/mschuessler/two4two), for designing diagnosis-based decision-making tasks. **Blockies** extends the Two4Two approach, which uses arm position as the only discriminator, with multiple traits that are used for the diagnosis of a disease called *OCDegen* to enable a more challenging task for high-stakes decision-making.
+**Blockies** is a parametric dataset generator to create images for simulated diagnostic tasks that can be used for assessing human-AI collaboration tools. It extends the approach of the [Two4Two library](https://github.com/mschuessler/two4two), which uses arm position as the only class discriminator, to include multiple customizable traits that can be used as symptoms for the diagnosis of an illness in Blockies called *OCDegen*. This affords human-ai collaboration researchers a more challenging task for high-stakes decision-making.
 
-More details are forthcoming. Please review our paper for more information in the meantime and cite it if you find it helpful.
+More details are forthcoming. In the meantime, please review our paper for more information and cite it if you find it helpful.
 ```
-@inproceedings{
-    johnson2025_blockies,
+ @article{Johnson_2025,
     title={Higher Stakes, Healthier Trust? An Application-Grounded Approach to Assessing Healthy Trust in High-Stakes Human-AI Collaboration},
-    author={David S. Johnson},
-    booktitle={arXiv},
-    year={2025},
-    url={}
+    author={Johnson, David S.}, 
+    note={arXiv:2503.03529 [cs]},
+    number={arXiv:2503.03529}, 
+    year={2025}, 
+    url={http://arxiv.org/abs/2503.03529},
+    DOI={10.48550/arXiv.2503.03529}, 
 }
+
 ```
-To understand the inspiration behind blockies, full details on the original Two4Two dataset can be found in their paper:
+To understand the inspiration behind **Blockies**, full details on the original Two4Two dataset can be found in their paper:
 ```
 @inproceedings{
     sixt2022do,
@@ -44,7 +46,7 @@ python3 -m venv ~/blockies_enviroment
 source ~/blockies_enviroment/bin/activate
 ```
 
-To install the **minimal installation** two4two package change into the cloned directory and run setuptools.
+To install the **minimal installation** blockies-haic package change into the cloned directory and run setuptools.
 
 ```
 cd blockies-haic
@@ -58,8 +60,10 @@ pip install .[example_notebooks_data_generation]
 
 To generate the default dataset on your own use the following commands:
 ```
-two4two_render_dataset config/color_spher_bias.toml
+blockies_render_dataset config/color_spher_bias.toml
 ```
 
 ## IJCAI25 - Submission
-Jupyter Notebooks to replicate and review the dataset and model used in the IJCAI submission are available in the folder `ijcai25`.  The notebooks also provide examples for working with an existing **Blockies** dataset.  
+Jupyter Notebooks to replicate and review the dataset and model used in the IJCAI submission are available in the folder `ijcai25`.  The notebooks also act as examples for working with an existing **Blockies** dataset.  
+
+You can also generate the dataset yourself using the config file: `ijcai25_blockies.toml`.
