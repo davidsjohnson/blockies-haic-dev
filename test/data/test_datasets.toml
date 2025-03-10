@@ -1,5 +1,5 @@
 [nobias]
-sampler = 'two4two.Sampler'
+sampler = 'blockies.Sampler'
 output_dir = 'OUTPUT_DIR_PLACEHOLDER'
 n_processes = 4
 download_blender = true

@@ -11,7 +11,7 @@ import pprint
 from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
 import uuid
 
-from two4two import utils
+from blockies import utils
 
 
 OBJ_NAME_TO_INT = {

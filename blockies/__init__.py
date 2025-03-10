@@ -4,11 +4,11 @@ __pdoc__ = {
     '_blender': False,
 }
 
-from two4two.bias import (
+from blockies.bias import (
     ColorBiasedSampler,
     HighVariationColorBiasedSampler,
     HighVariationSampler,
     Sampler,
 )
-from two4two.blender import render
-from two4two.scene_parameters import SceneParameters
+from blockies.blender import render
+from blockies.scene_parameters import SceneParameters

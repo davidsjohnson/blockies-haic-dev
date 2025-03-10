@@ -10,8 +10,8 @@ from typing import Dict, Iterator, Optional, Sequence, Tuple
 import imageio
 import numpy as np
 
-from two4two import scene_parameters
-from two4two import utils
+from blockies import scene_parameters
+from blockies import utils
 
 
 def _download_blender(blender_dir: str):

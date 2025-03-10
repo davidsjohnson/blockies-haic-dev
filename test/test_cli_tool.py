@@ -3,8 +3,8 @@
 import os
 import pathlib
 
-from two4two import cli_tool
-import two4two.scene_parameters
+from blockies import cli_tool
+import blockies.scene_parameters
 
 
 def test_cli_tool(tmp_path: pathlib.Path):
@@ -26,6 +26,6 @@ def test_cli_tool(tmp_path: pathlib.Path):
     param_fname = str(tmp_path / 'no_bias' / 'train' / 'parameters.jsonl')
     dataset_dir = str(tmp_path / 'no_bias' / 'train')
 
-    for param in two4two.scene_parameters.load_jsonl(param_fname):
+    for param in blockies.scene_parameters.load_jsonl(param_fname):
         assert os.path.exists(os.path.join(dataset_dir, param.filename))
         assert os.path.exists(os.path.join(dataset_dir, param.mask_filename))

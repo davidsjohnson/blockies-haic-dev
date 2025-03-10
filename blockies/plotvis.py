@@ -7,8 +7,8 @@ import matplotlib as mlp
 import matplotlib.pyplot as plt
 
 
-from two4two import blender
-from two4two import scene_parameters
+from blockies import blender
+from blockies import scene_parameters
 
 
 def render_grid(

@@ -23,7 +23,7 @@ function fail {
 
 # Early stop the test if there are Python syntax errors or undefined names.
 echo "Executing flake sanity checks..."
-flake8 ./two4two \
+flake8 ./blockies \
        ./test  \
        ./setup.py  \
        ./examples \

@@ -8,7 +8,7 @@ echo "Executing mypy..."
 
 
 python -m mypy \
-    two4two/ \
+    blockies/ \
     test/ \
     setup.py  \
     "$@"
