@@ -1,5 +1,5 @@
 [run]
-include=two4two/*
+include=blockies/*
 
 # omitted as it is barely covered because of ``coverage.process_startup()``.
-omit=two4two/_blender/render_samples.py
+omit=blockies/_blender/render_samples.py

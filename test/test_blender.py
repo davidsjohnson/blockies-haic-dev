@@ -100,6 +100,7 @@ def test_blender_fliplr(tmp_path: Path):
     original_path.mkdir()
     fliplr_path.mkdir()
 
+    # TODO: Need to fix the render to have consisitent bones that are different
     for (img_original, mask_original, _) in blockies.render(
         [param_original],
         output_dir=str(original_path),

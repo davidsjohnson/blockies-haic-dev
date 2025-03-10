@@ -21,7 +21,7 @@ flake8 \
     --statistics \
     ./test/ \
     ./setup.py \
-    ./two4two/ \
+    ./blockies/ \
     || fail
 
 echo -e "${Green}PASSED$Color_Off"

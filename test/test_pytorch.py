@@ -1,4 +1,4 @@
-"""Tests for ``two4two/pytorch.py``."""
+"""Tests for ``blockies/pytorch.py``."""
 
 from pathlib import Path
 
@@ -27,7 +27,7 @@ def test_pytorch_dataloader(tmp_path: Path):
     ):
         pass
 
-    dataset = blockies.pytorch.Two4Two(str(tmp_path), split='train')
+    dataset = blockies.pytorch.Blockies(str(tmp_path), split='train')
 
     df = dataset.get_dataframe()
     assert df.obj_name[0] == sampled_params[0].obj_name

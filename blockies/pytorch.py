@@ -12,13 +12,13 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-import two4two
-from two4two import scene_parameters
-from two4two import utils
-import two4two.blender
+import blockies
+from blockies import scene_parameters
+from blockies import utils
+import blockies.blender
 
 
-def filter_attributes(param: two4two.SceneParameters) -> Dict[str, Any]:
+def filter_attributes(param: blockies.SceneParameters) -> Dict[str, Any]:
     """Transforms a SceneParameters object to a dict.
 
     Filter the ``*_rbga``, ``resolution`` and ``_attributes_status`` attributes.
@@ -31,7 +31,7 @@ def filter_attributes(param: two4two.SceneParameters) -> Dict[str, Any]:
     return state
 
 
-def all_attributes(param: two4two.SceneParameters) -> Dict[str, Any]:
+def all_attributes(param: blockies.SceneParameters) -> Dict[str, Any]:
     """Transforms a SceneParameters object to a dict.
 
     The attribute status is encoded in the members
@@ -45,8 +45,8 @@ def all_attributes(param: two4two.SceneParameters) -> Dict[str, Any]:
     return state
 
 
-class Two4Two(Dataset):
-    """Pytorch Dataset for Two4Two.
+class Blockies(Dataset):
+    """Pytorch Dataset for Blockies.
 
     The dataset can return all attributes of SceneParameters. You can configure
     which attributes to return by the ``return_attributes`` constructor
@@ -59,7 +59,7 @@ class Two4Two(Dataset):
     For example:
 
     ```
-        dset = Two4Two(
+        dset = Blockies(
             my_root_dir, 'train',
             return_attributes=['obj_name', 'bending'])
         img, mask, label = dset[0]
@@ -102,7 +102,7 @@ class Two4Two(Dataset):
         with open(param_fname) as f:
             for line in f.readlines():
                 state = json.loads(line)
-                self.params.append(two4two.SceneParameters.load(state))
+                self.params.append(blockies.SceneParameters.load(state))
 
     def set_return_attributes(self, labels: Sequence[str]):
         """Set the labels to return."""
@@ -110,7 +110,7 @@ class Two4Two(Dataset):
 
     def get_dataframe(
         self,
-        to_dict: Callable[[two4two.SceneParameters],
+        to_dict: Callable[[blockies.SceneParameters],
                           Dict[str, Any]] = filter_attributes
     ) -> pd.DataFrame:
         """Returns a pandas dataframe of all labels.
@@ -130,7 +130,7 @@ class Two4Two(Dataset):
 
     def _scene_parameters_to_flat_array(
         self,
-        params: two4two.SceneParameters,
+        params: blockies.SceneParameters,
     ) -> Tuple[Sequence[str], torch.Tensor]:
         """Returns a list of label names and numpy array with the labels.
 
@@ -166,11 +166,11 @@ class Two4Two(Dataset):
 
     def segmentation_int_to_label(self, index: int) -> str:
         """Return the label of the segmentation mask."""
-        return two4two.blender.SEGMENTATION_INT_TO_NAME[index]
+        return blockies.blender.SEGMENTATION_INT_TO_NAME[index]
 
     def segmentation_label_to_int(self, label: str) -> int:
         """Return the index of the segmentation label."""
-        return two4two.blender.SEGMENTATION_NAME_TO_INT[label]
+        return blockies.blender.SEGMENTATION_NAME_TO_INT[label]
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, ...]:
         param = self.params[idx]

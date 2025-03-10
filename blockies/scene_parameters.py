@@ -81,6 +81,11 @@ class SceneParameters:
     bg_color_rgba: utils.RGBAColor = (
         0.5490196078431373, 0.5490196078431373, 0.5490196078431373, 1.0)
     resolution: Tuple[int, int] = (128, 128)
+
+    # parameters to support new blocky blender scene
+    ill_spherical: float = 0.5
+    num_diff: int = 1
+
     id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid4()))
     original_id: Optional[str] = None
     _attributes_status: Dict[str, str] = dataclasses.field(
