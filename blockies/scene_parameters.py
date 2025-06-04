@@ -1,4 +1,5 @@
-"""This module contains classes to sample and describes individual scenes."""
+"""This module contains classes to sample and describes individual scenes 
+for the Blockies variation of Two4Two."""
 
 from __future__ import annotations
 
@@ -7,6 +8,7 @@ import dataclasses
 import importlib
 import json
 import math
+import itertools
 import pprint
 from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
 import uuid
@@ -15,15 +17,18 @@ from blockies import utils
 
 
 OBJ_NAME_TO_INT = {
-    'peaky': 0,
-    'stretchy': 1,
+    'healthy': 0,
+    'ocd': 1,
 }
 """Mapping from SceneParameters.obj_name to an integer. Please use this
 encoding convention if you train a binary classifier."""
 
+# Setup ILL characteristics and their probabilities
+ILL_MARKERS = {'high_bend': .30, 'high_sphere_diff': .30, 'mutation_mainbones': .10, 'stretchy': .30}
+
 
 @dataclasses.dataclass()
-class SceneParameters:
+class SceneParameters():
     """All parameters need to render a single image / scene.
 
     See the ``SceneParameters.VALID_VALUES`` for valid value ranges for the
@@ -37,7 +42,7 @@ class SceneParameters:
     subclass.
 
     Attrs:
-        obj_name: Object name (either ``"peaky"`` or ``"stretchy"``).
+        obj_name: Object name (either ``"healthy"`` or ``"ocd"``).
         labeling_error: If ``True``, the ``obj_name_with_label_error``, will
             return the flipped obj_name. The ``obj_name`` attribute itself will
             not change.
@@ -62,38 +67,46 @@ class SceneParameters:
 
     """
     # TODO: once #38 is done. describe the coordinate system in full detail.
-    obj_name: str = 'peaky'
+    obj_name: str = 'healthy'           # encondes class of the generate blocky
+    num_ill_chars: int = 1              # encondes the number of ILL characteristics of the blocky
+    ill_chars: Union[tuple[str], None] = None # encondes the ILL characteristics of the blocky
     labeling_error: bool = False
-    spherical: float = 0.5
-    bending: float = 0.0
-    obj_rotation_roll: float = 0.0
-    obj_rotation_pitch: float = 0.0
-    obj_rotation_yaw: float = 0.0
-    fliplr: bool = False
-    position_x: float = 0.0
-    position_y: float = 0.0
-    arm_position: float = 0.0
-    obj_color: float = 0.5
+    main_spherical: float = 0.1         # encodes the sphericality of the main bones of a blocky
+    sec_spherical: float = 0.6          # encodes the sphericality of the sec bones of a blocky
+    num_sec_bones: int = 2              # encodes the number of secondary bones of a blocky
+    bending: float = 0.0                # encodes the bending of the blocky posture
+    obj_rotation_roll: float = 0.0      # encodes the rotation of the blocky around the Y axis
+    obj_rotation_pitch: float = 0.0     # encodes the rotation of the blocky around the Z axis
+    obj_rotation_yaw: float = 0.0       # encodes the rotation of the blocky around the X axis
+    fliplr: bool = False                # encodes if the blocky should be flipped left to right
+    position_x: float = 0.0             # encodes the position of the blocky on the x-axis
+    position_y: float = 0.0             # encodes the position of the blocky on the y-axis
+    arm_position: float = 0.0           # encodes the absolute position of the arms of the blocky
+    
+    obj_color: float = 0.5              # encodes the color of the blocky
     # When passing 0.5 to the cmap 'seismic' the following color is obtained
     obj_color_rgba: utils.RGBAColor = (1.0, 0.9921568627450981, 0.9921568627450981, 1.0)
-    bg_color: float = 0.45
+    
+    bg_color: float = 0.45              # encodes the color of the background
     # When passing 0.45 to the cmap 'binary' the following color is obtained
     bg_color_rgba: utils.RGBAColor = (
         0.5490196078431373, 0.5490196078431373, 0.5490196078431373, 1.0)
-    resolution: Tuple[int, int] = (128, 128)
-
-    # parameters to support new blocky blender scene
-    ill_spherical: float = 0.5
-    num_diff: int = 1
+    
+    resolution: Tuple[int, int] = (256  , 256)
 
     id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid4()))
     original_id: Optional[str] = None
+
     _attributes_status: Dict[str, str] = dataclasses.field(
         repr=False,
         default_factory=lambda: {
             'obj_name': 'default',
+            'num_ill_chars': 'default',
+            'ill_chars': 'default',
             'labeling_error': 'default',
-            'spherical': 'default',
+            'main_spherical': 'default',
+            'sec_spherical': 'default',
+            'num_sec_bones': 'default',
             'bending': 'default',
             'obj_rotation_roll': 'default',
             'obj_rotation_pitch': 'default',
@@ -112,10 +125,18 @@ class SceneParameters:
             set[bool],
             set[str],
         ]]] = {
-        'spherical': (0., 1.),
+        'num_ill_chars': (0, 4),
+
+        # check for all possible combinations of ILL_MARKERS
+        'ill_chars': set([()] + list(itertools.chain.from_iterable(
+            itertools.permutations(ILL_MARKERS.keys(), r) for r in range(1, 5)
+            ))),
+        'main_spherical': (0., 1.22),
+        'sec_spherical': (0., 1.22),
+        'num_sec_bones': (1, 4),
         'arm_position': (0., 1.),
         'bending': (- math.pi / 8, math.pi / 8),
-        'obj_name': set(['peaky', 'stretchy']),
+        'obj_name': set(['healthy', 'ocd']),
         'labeling_error': set([False, True]),
         'obj_rotation_roll': (- math.pi / 3, math.pi / 3),
         'obj_rotation_pitch': (- math.pi / 3, math.pi / 3),
@@ -128,16 +149,21 @@ class SceneParameters:
     }
 
     @classmethod
-    def default_peaky(cls) -> SceneParameters:
-        """Creates SceneParameters with default values for peaky."""
+    def default_healthy(cls) -> SceneParameters:
+        """Creates SceneParameters with default values for a healthy Blocky."""
         return cls()
 
     @classmethod
-    def default_stretchy(cls) -> SceneParameters:
-        """Creates SceneParameters with default values for stretchy."""
+    def default_ocd(cls) -> SceneParameters:
+        """Creates SceneParameters with default values for a Blocky with OCDegen."""
         params = cls()
-        params.obj_name = 'stretchy'
-        params.arm_position = 1
+        params.obj_name = 'ocd'
+        params.ill_chars = ['strong_bend', 'strong_sphere_diff', 'stretchy']
+        params.bending = 0.3
+        params.main_spherical = 0.1
+        params.sec_spherical_diff = 0.6
+        params.num_sec_bones = 2
+        params.arm_position = 0.9
         return params
 
     @classmethod
@@ -158,8 +184,8 @@ class SceneParameters:
         for name, valid in self.VALID_VALUES.items():
             value = getattr(self, name)
             # value can be either a single value or multiple
-            if type(value) == str or not utils.supports_iteration(value):
-                # test for a single value
+            if type(value) == str or not utils.supports_iteration(value) or name == 'ill_chars':
+                # test for a single value (or list of ill_chars)
                 if not self._is_allowed_value(value, name):
                     raise ValueError(f"Attribute {name} has value {value} but "
                                      f"valid values would be in {valid}.")
@@ -303,8 +329,8 @@ class SceneParameters:
     def obj_name_with_label_error(self) -> str:
         """Returns the object name taking into account the label error."""
         flip_obj_name = {
-            'peaky': 'stretchy',
-            'stretchy': 'peaky',
+            'healthy': 'ocd',
+            'ocd': 'healthy',
         }
         return {
             False: self.obj_name,
@@ -324,17 +350,17 @@ def load_jsonl(path: str) -> List[SceneParameters]:
                 for line in f.readlines()]
 
 
-def split_peaky_stretchy(params: List[SceneParameters],
-                         num_samples: int = None
-                         ) -> Tuple[List[SceneParameters],
-                                    List[SceneParameters]]:
-    """Returns a tuple of SceneParameters split by their type (peaky or stretchy).
+def split_healthy_ocd(params: List[SceneParameters],
+                      num_samples: int = None
+                      ) -> Tuple[List[SceneParameters],
+                                 List[SceneParameters]]:
+    """Returns a tuple of SceneParameters split by their type.
 
     Attrs:
-        params: List of SceneParfameters to split by ``peaky`` and ``stretchy``
+        params: List of SceneParfameters to split by ``healthy`` and ``ocd``
         num_samples: exact number of SceneParameters to select per class. None means all availabel.
 
 
     """
-    return ([p for p in params if p.obj_name == 'peaky'][:num_samples],
-            [p for p in params if p.obj_name == 'stretchy'][:num_samples])
+    return ([p for p in params if p.obj_name == 'healthy'][:num_samples],
+            [p for p in params if p.obj_name == 'ocd'][:num_samples])

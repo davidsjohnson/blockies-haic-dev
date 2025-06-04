@@ -2,6 +2,7 @@ blender.tar.xz
 get-pip.py
 blender/
 blockies_datasets/
+*.tar.gz
 
 
 # Byte-compiled / optimized / DLL files

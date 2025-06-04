@@ -214,10 +214,10 @@ class Scene():
 
         self.obj = blender_object.Two4TwoBlenderObject(
             parameters.obj_name,
-            parameters.spherical,
-            parameters.ill_spherical,
+            parameters.main_spherical,
+            parameters.sec_spherical,
             parameters.arm_position,
-            parameters.num_diff)
+            parameters.num_sec_bones)
         self.obj.add_material(parameters.obj_color_rgba)
 
         blend_dir = os.path.dirname(bpy.data.filepath)

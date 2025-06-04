@@ -392,8 +392,8 @@ class Two4TwoBlenderObject():
 
     def __init__(self,
                  obj_name: str,
-                 spherical: float = 0,
-                 ill_spherical: float = 0,
+                 main_spherical: float = 0,
+                 sec_spherical: float = 0,
                  arm_position: float = 0,
                  num_diff: int = 2):
 
@@ -404,9 +404,9 @@ class Two4TwoBlenderObject():
         self.blocks: Dict[str, bpy.types.Object] = {}
         self.num_of_cubes = 8
         base_width = 0.8
-        self.cube_size = base_width + spherical * 0.1
+        self.cube_size = base_width + main_spherical * 0.1
 
         self._create_model()
         self._create_armature()
         self.center()
-        self._set_spherical(amount=spherical, amount2=ill_spherical, num_diff=num_diff)
+        self._set_spherical(amount=main_spherical, amount2=sec_spherical, num_diff=num_diff)
