@@ -261,7 +261,7 @@ class BlockySampler:
 
         high_sphere_dist = utils.truncated_normal(.60, .1, .50, .75)
 
-        dist = high_sphere_dist if params.ill_chars == 'high_sphere_diff' else self.sec_spherical
+        dist = high_sphere_dist if 'high_sphere_diff' in params.ill_chars else self.sec_spherical
 
         sphere_diff = -1
         new_val = -1
