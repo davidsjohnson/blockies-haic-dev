@@ -22,9 +22,6 @@ Discrete = Union[_Discrete, Dict[str, _Discrete]]
 
 Distribution = Union[Discrete, _Continuous]
 
-# Setup ILL characteristics and their probabilities
-ILL_MARKERS = {'high_bend': 1.0}
-
 @dataclasses.dataclass()
 class BlockySampler:
     """Samples the parameters of the ``BlockySceneParameters`` objects.
@@ -72,19 +69,16 @@ class BlockySampler:
         bg_color: distribution of ``BlockySceneParameters.bg_color``.
     """
 
+    # Setup ILL characteristics and their probabilities
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_bend': 1.0})
+    ill_chars: dict = dataclasses.field(init=False)
+
     # set the default sampling distributions
     obj_name: Discrete = utils.discrete({'healthy': 0.5, 'ocd': 0.5})
     num_ill_chars: Discrete = dataclasses.field(
         default_factory=lambda: {
             'healthy': utils.discrete({0: 1.0}),
             'ocd': utils.discrete({1: 1.0})
-        }
-    )
-    # by default choose 1 ill charachteristic for healthy and 2 for ocd
-    ill_chars: Discrete = dataclasses.field(
-        default_factory=lambda: {
-            'healthy': utils.multiple_choice(values=list(ILL_MARKERS.keys()), probs=list(ILL_MARKERS.values()), size=1),
-            'ocd': utils.multiple_choice(values=list(ILL_MARKERS.keys()), probs=list(ILL_MARKERS.values()), size=2)
         }
     )
 
@@ -108,6 +102,17 @@ class BlockySampler:
     bg_color: Continuous = scipy.stats.uniform(0.05, 0.90)
     bg_color_map: str = 'coolwarm'
     obj_color_map: str = 'coolwarm'
+
+
+    def __post_init__(self):
+        # TODO: remove this as, I think self.ill_chars doesn't need to be initialized here, since num_ill_chars
+        # must be sampled first
+        values = list(self.ill_markers.keys())
+        probs = list(self.ill_markers.values())
+        self.ill_chars = {
+            'healthy': utils.multiple_choice(values=values, probs=probs, size=1),
+            'ocd': utils.multiple_choice(values=values, probs=probs, size=2)
+        }
 
     
     def sample(self, obj_name: Optional[str] = None) -> SceneParameters:
@@ -228,7 +233,7 @@ class BlockySampler:
 
         assert num_ill_chars < 1 if obj_name == 'healthy' else num_ill_chars == 1, f'Invalid number of ill characteristics, {num_ill_chars} for the given obj_name {obj_name}'
 
-        char_sampler = utils.multiple_choice(values=list(ILL_MARKERS.keys()), probs=list(ILL_MARKERS.values()), size=num_ill_chars)
+        char_sampler = utils.multiple_choice(values=list(self.ill_markers.keys()), probs=list(self.ill_markers.values()), size=num_ill_chars)
         ill_chars = tuple(char_sampler().tolist())
         params.ill_chars = ill_chars
 
@@ -261,8 +266,7 @@ class BlockySampler:
 
         high_sphere_dist = utils.truncated_normal(.60, .1, .50, .75)
 
-        # dist = high_sphere_dist if 'high_sphere_diff' in params.ill_chars else self.sec_spherical
-        dist = high_sphere_dist
+        dist = high_sphere_dist if 'high_sphere_diff' in params.ill_chars else self.sec_spherical
 
         sphere_diff = -1
         new_val = -1
@@ -312,6 +316,7 @@ class BlockySampler:
 
         stretchy_dist = utils.truncated_normal(mean=0.75, std=0.1, lower=0.5, upper=1.0)
         dist = stretchy_dist if 'stretchy' in params.ill_chars else self.arm_position
+
         params.arm_position = self._sample(obj_name, dist)
         params.mark_sampled('arm_position')
 
@@ -442,3 +447,24 @@ class BlockySampler:
         params.bg_color = float(self._sample(obj_name, self.bg_color))
         params.bg_color_rgba = tuple(self._bg_cmap(params)(params.bg_color))  # type: ignore
         params.mark_sampled('bg_color')
+
+@dataclasses.dataclass()
+class HighSphereDiffBlockySampler(BlockySampler):
+    """
+    A sampler that samples blockies with only one ill characteristic: high_sphere_diff
+    """
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_sphere_diff': 1.0})
+
+@dataclasses.dataclass()
+class MutationMainBonesBlockySampler(BlockySampler):
+    """
+    A sampler that samples blockies with only one ill characteristic: mutation_mainbones
+    """
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'mutation_mainbones': 1.0})
+
+@dataclasses.dataclass()
+class StretchyBlockySampler(BlockySampler):
+    """
+    A sampler that samples blockies with only one ill characteristic: stretchy
+    """
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'stretchy': 1.0})
