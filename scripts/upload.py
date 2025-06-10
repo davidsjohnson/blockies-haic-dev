@@ -8,6 +8,9 @@ import owncloud
 
 
 def make_tarfile(output_filename: Path, source_dir: Path):
+    print(f'Tarring {source_dir} to {output_filename}')
+    if not source_dir.exists():
+        raise FileNotFoundError(f"Source directory {source_dir} does not exist.")
     subprocess.run(["tar", "-czvf", output_filename, source_dir])
 
 
