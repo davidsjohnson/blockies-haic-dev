@@ -68,12 +68,12 @@ class SceneParameters():
     """
     # TODO: once #38 is done. describe the coordinate system in full detail.
     obj_name: str = 'healthy'           # encondes class of the generate blocky
-    num_ill_chars: int = 1              # encondes the number of ILL characteristics of the blocky
-    ill_chars: Union[tuple[str], None] = None # encondes the ILL characteristics of the blocky
+    num_ill_chars: int = 0              # encondes the number of ILL characteristics of the blocky
+    ill_chars: Union[tuple[str], None] = () # encondes the ILL characteristics of the blocky
     labeling_error: bool = False
-    main_spherical: float = 0.1         # encodes the sphericality of the main bones of a blocky
+    main_spherical: float = 0.9         # encodes the sphericality of the main bones of a blocky
     sec_spherical: float = 0.6          # encodes the sphericality of the sec bones of a blocky
-    num_sec_bones: int = 2              # encodes the number of secondary bones of a blocky
+    sec_bones: str = '001'              # encodes the number and postion of secondary bones of a blocky (each digit is a bone)
     bending: float = 0.0                # encodes the bending of the blocky posture
     obj_rotation_roll: float = 0.0      # encodes the rotation of the blocky around the Y axis
     obj_rotation_pitch: float = 0.0     # encodes the rotation of the blocky around the Z axis
@@ -106,7 +106,7 @@ class SceneParameters():
             'labeling_error': 'default',
             'main_spherical': 'default',
             'sec_spherical': 'default',
-            'num_sec_bones': 'default',
+            'sec_bones': 'default',
             'bending': 'default',
             'obj_rotation_roll': 'default',
             'obj_rotation_pitch': 'default',
@@ -133,7 +133,7 @@ class SceneParameters():
             ))),
         'main_spherical': (0., 1.22),
         'sec_spherical': (0., 1.22),
-        'num_sec_bones': (1, 4),
+        'sec_bones': set(('001', '010', '100', '011',  '101', '110', '111')),
         'arm_position': (0., 1.),
         'bending': (- math.pi / 8, math.pi / 8),
         'obj_name': set(['healthy', 'ocd']),
@@ -158,11 +158,12 @@ class SceneParameters():
         """Creates SceneParameters with default values for a Blocky with OCDegen."""
         params = cls()
         params.obj_name = 'ocd'
+        params.num_ill_chars = 3
         params.ill_chars = ['strong_bend', 'strong_sphere_diff', 'stretchy']
         params.bending = 0.3
-        params.main_spherical = 0.1
-        params.sec_spherical_diff = 0.6
-        params.num_sec_bones = 2
+        params.main_spherical = 0.85
+        params.sec_spherical = 0.3
+        params.sec_bones = '111'  # one secondary bone
         params.arm_position = 0.9
         return params
 
@@ -205,6 +206,8 @@ class SceneParameters():
             self.obj_color_rgba = tuple(self.obj_color_rgba)
         if type(self.resolution) == list:
             self.resolution = tuple(self.resolution)
+        if type(self.ill_chars) == list:
+            self.ill_chars = tuple(self.ill_chars)
 
     @staticmethod
     def load(state: Dict[str, Any]) -> SceneParameters:

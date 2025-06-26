@@ -217,7 +217,7 @@ class Scene():
             parameters.main_spherical,
             parameters.sec_spherical,
             parameters.arm_position,
-            parameters.num_sec_bones)
+            parameters.sec_bones)
         self.obj.add_material(parameters.obj_color_rgba)
 
         blend_dir = os.path.dirname(bpy.data.filepath)

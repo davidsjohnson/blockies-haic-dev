@@ -22,9 +22,6 @@ Discrete = Union[_Discrete, Dict[str, _Discrete]]
 
 Distribution = Union[Discrete, _Continuous]
 
-# Setup ILL characteristics and their probabilities
-ILL_MARKERS = {'high_bend': .30, 'high_sphere_diff': .30, 'mutation_mainbones': .10, 'stretchy': .30}
-
 @dataclasses.dataclass()
 class BlockySampler:
     """Samples the parameters of the ``BlockySceneParameters`` objects.
@@ -80,18 +77,14 @@ class BlockySampler:
             'ocd': utils.discrete({2: .75, 3: .20, 4: .05})
         }
     )
-    # by default choose 1 ill charachteristic for healthy and 2 for ocd
-    ill_chars: Discrete = dataclasses.field(
-        default_factory=lambda: {
-            'healthy': utils.multiple_choice(values=list(ILL_MARKERS.keys()), probs=list(ILL_MARKERS.values()), size=1),
-            'ocd': utils.multiple_choice(values=list(ILL_MARKERS.keys()), probs=list(ILL_MARKERS.values()), size=2)
-        }
-    )
+
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_bend': .30, 'high_sphere_diff': .30, 'mutation_mainbones': .10, 'stretchy': .30})
+    ill_chars: dict = dataclasses.field(init=False)
 
     # set up main and secondary bones
     main_spherical: Continuous = scipy.stats.beta(0.3, 0.3)
     sec_spherical: Continuous = utils.truncated_normal(.20, .10, .05, .30)
-    num_sec_bones: Discrete = utils.discrete({1: 1/3, 2: 1/3, 3: 1/3})
+    sec_bones: str = dataclasses.field(init=False)
 
     bending: Continuous = utils.truncated_normal(0.1, 0.125, 0, 0.20)
     arm_position: Continuous = utils.truncated_normal(mean=0.5, std=0.2, lower=0, upper=0.5)
@@ -108,6 +101,19 @@ class BlockySampler:
     bg_color: Continuous = scipy.stats.uniform(0.05, 0.90)
     bg_color_map: str = 'coolwarm'
     obj_color_map: str = 'coolwarm'
+
+    def __post_init__(self):
+        # TODO: remove this as, I think self.ill_chars doesn't need to be initialized here, since num_ill_chars
+        # must be sampled first
+        values = list(self.ill_markers.keys())
+        probs = list(self.ill_markers.values())
+        self.ill_chars = {
+            'healthy': utils.multiple_choice(values=values, probs=probs, size=1),
+            'ocd': utils.multiple_choice(values=values, probs=probs, size=2)
+        }
+        self.sec_bones_options = ('001', '010', '100', '011',  '101', '110', '111')
+        self.sec_bones: Discrete = utils.discrete({o: 1 / len(self.sec_bones_options) for o in self.sec_bones_options})
+        
 
     
     def sample(self, obj_name: Optional[str] = None) -> SceneParameters:
@@ -137,7 +143,7 @@ class BlockySampler:
         self.sample_labeling_error(params)  
         self.sample_main_spherical(params)
         self.sample_sec_spherical(params)
-        self.sample_num_sec_bones(params)
+        self.sample_sec_bones(params)
         self.sample_bending(params)
         self.sample_arm_position(params)
         self.sample_rotation(params)
@@ -228,7 +234,10 @@ class BlockySampler:
 
         assert num_ill_chars < 2 if obj_name == 'healthy' else num_ill_chars <= 4, f'Invalid number of ill characteristics, {num_ill_chars} for the given obj_name {obj_name}'
 
-        char_sampler = utils.multiple_choice(values=list(ILL_MARKERS.keys()), probs=list(ILL_MARKERS.values()), size=num_ill_chars)
+        values = list(self.ill_markers.keys())
+        probs = list(self.ill_markers.values())
+        char_sampler = utils.multiple_choice(values=values, probs=probs, size=num_ill_chars)
+        
         ill_chars = tuple(char_sampler().tolist())
         params.ill_chars = ill_chars
 
@@ -273,7 +282,7 @@ class BlockySampler:
         params.sec_spherical = new_val
         params.mark_sampled('sec_spherical')
 
-    def sample_num_sec_bones(self, params: SceneParameters, intervention: bool = False):
+    def sample_sec_bones(self, params: SceneParameters, intervention: bool = False):
         """Samples the number of secondary bones.
 
         Attrs:
@@ -281,8 +290,8 @@ class BlockySampler:
             intervention: Flag whether interventional sampling is applied. Details: see class docu.
         """
         obj_name = self._sample_name() if intervention else params.obj_name
-        params.num_sec_bones = self._sample(obj_name, self.num_sec_bones)
-        params.mark_sampled('num_sec_bones')
+        params.sec_bones = self._sample(obj_name, self.sec_bones)
+        params.mark_sampled('sec_bones')
 
     def sample_bending(self, params: SceneParameters, intervention: bool = False):
         """Samples the bending of the bones.

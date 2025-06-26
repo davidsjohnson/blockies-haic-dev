@@ -69,9 +69,7 @@ class BlockySampler:
         bg_color: distribution of ``BlockySceneParameters.bg_color``.
     """
 
-    # Setup ILL characteristics and their probabilities
-    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_bend': 1.0})
-    ill_chars: dict = dataclasses.field(init=False)
+
 
     # set the default sampling distributions
     obj_name: Discrete = utils.discrete({'healthy': 0.5, 'ocd': 0.5})
@@ -82,10 +80,14 @@ class BlockySampler:
         }
     )
 
+    # Setup ILL characteristics and their probabilities
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_bend': 1.0})
+    ill_chars: dict = dataclasses.field(init=False)
+
     # set up main and secondary bones
     main_spherical: Continuous = scipy.stats.beta(0.3, 0.3)
     sec_spherical: Continuous = utils.truncated_normal(.20, .10, .05, .30)
-    num_sec_bones: Discrete = utils.discrete({1: 1/3, 2: 1/3, 3: 1/3})
+    sec_bones: str = dataclasses.field(init=False)
 
     bending: Continuous = utils.truncated_normal(0.1, 0.125, 0, 0.20)
     arm_position: Continuous = utils.truncated_normal(mean=0.5, std=0.2, lower=0, upper=0.5)
@@ -113,6 +115,9 @@ class BlockySampler:
             'healthy': utils.multiple_choice(values=values, probs=probs, size=1),
             'ocd': utils.multiple_choice(values=values, probs=probs, size=2)
         }
+        self.sec_bones_options = ('001', '010', '100', '011',  '101', '110', '111')
+        self.sec_bones: Discrete = utils.discrete({o: 1 / len(self.sec_bones_options) for o in self.sec_bones_options})
+        
 
     
     def sample(self, obj_name: Optional[str] = None) -> SceneParameters:
@@ -278,7 +283,7 @@ class BlockySampler:
         params.sec_spherical = new_val
         params.mark_sampled('sec_spherical')
 
-    def sample_num_sec_bones(self, params: SceneParameters, intervention: bool = False):
+    def sample_sec_bones(self, params: SceneParameters, intervention: bool = False):
         """Samples the number of secondary bones.
 
         Attrs:
@@ -286,8 +291,8 @@ class BlockySampler:
             intervention: Flag whether interventional sampling is applied. Details: see class docu.
         """
         obj_name = self._sample_name() if intervention else params.obj_name
-        params.num_sec_bones = self._sample(obj_name, self.num_sec_bones)
-        params.mark_sampled('num_sec_bones')
+        params.sec_bones = self._sample(obj_name, self.sec_bones)
+        params.mark_sampled('sec_bones')
 
     def sample_bending(self, params: SceneParameters, intervention: bool = False):
         """Samples the bending of the bones.
