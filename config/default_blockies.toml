@@ -4,7 +4,7 @@
 sampler = 'blockies.blocky_bias.BlockySampler'
 
 # Save dataset to this directory.
-output_dir = 'blockies_datasets/default'
+output_dir = 'blockies_datasets/blockies/default'
 
 # Should be an existing output_dir be overwritten? [Default: false]
 force_overwrite = true
@@ -20,13 +20,13 @@ download_blender = true
 
 # creates new dataset split names `train`.
 [default_ds.train]
-n_samples = 400
+n_samples = 40000
 
 [default_ds.test]
-n_samples = 20
+n_samples = 2000
 
 [default_ds.validation]
-n_samples = 10
+n_samples = 1000
 
 [default_ds.xai]
-n_samples = 10
+n_samples = 100
