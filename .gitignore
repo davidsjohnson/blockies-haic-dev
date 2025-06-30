@@ -1,7 +1,8 @@
 blender.tar.xz
 get-pip.py
 blender/
-blockies_datasets/
+blockies_datasets
+z_blockies_datasets_archive/
 *.tar.gz
 
 
