@@ -1,0 +1,32 @@
+[bend_only]
+# Class of the sampler. Must be of the form "your.module.YourSampler".
+# The module must be importable from the current enviroment.
+sampler = 'blockies.simple_datasets_bias.BlockySampler'
+
+# Save dataset to this directory.
+output_dir = 'blockies_datasets/simple/bend_only'
+
+# Should be an existing output_dir be overwritten? [Default: false]
+force_overwrite = true
+
+# Number of concurrent processes.
+n_processes = 6
+
+# Should blender be downloaded? [Default: false]
+download_blender = true
+
+# Should the blender output be printed? [Default: false]
+ debug = false
+
+# creates new dataset split names `train`.
+[bend_only.train]
+n_samples = 20000
+
+[bend_only.test]
+n_samples = 2000
+
+[bend_only.validation]
+n_samples = 1000
+
+[bend_only.xai]
+n_samples = 100

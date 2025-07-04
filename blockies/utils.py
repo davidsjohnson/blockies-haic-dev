@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+from functools import partial
 from typing import Any, Dict, Optional, Sequence, Tuple, Type, TypeVar, Union
 
 import numpy as np
@@ -91,7 +92,7 @@ def multiple_choice(values: Sequence[str], probs: Sequence[float], size: int) ->
         probs: The probabilities of the values.
 
     """
-    return lambda: tuple(np.random.choice(values, p=probs, size=size, replace=False))
+    return partial(np.random.choice, a=values, p=probs, size=size, replace=False)
 
 def truncated_normal(mean: float = 0,
                      std: float = 1,

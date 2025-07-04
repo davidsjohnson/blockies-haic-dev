@@ -69,25 +69,28 @@ class BlockySampler:
         bg_color: distribution of ``BlockySceneParameters.bg_color``.
     """
 
+
+
     # set the default sampling distributions
     obj_name: Discrete = utils.discrete({'healthy': 0.5, 'ocd': 0.5})
     num_ill_chars: Discrete = dataclasses.field(
         default_factory=lambda: {
-            'healthy': utils.discrete({0: .25, 1: .75}),
-            'ocd': utils.discrete({2: .75, 3: .25})
+            'healthy': utils.discrete({0: 1.0}),
+            'ocd': utils.discrete({1: 1.0})
         }
     )
 
-    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_bend': 1/4., 'high_sphere_diff': 1/4., 'stretchy': 1/4., 'mutation_mainbones': 1/4.})
+    # Setup ILL characteristics and their probabilities
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_bend': 1.0})
     ill_chars: dict = dataclasses.field(init=False)
 
     # set up main and secondary bones
     main_spherical: Continuous = scipy.stats.beta(0.3, 0.3)
-    sec_spherical: Continuous = utils.truncated_normal(mean=0.4, std=0.10, lower=0.05, upper=0.45)
+    sec_spherical: Continuous = utils.truncated_normal(.20, .10, .05, .30)
     sec_bones: str = dataclasses.field(init=False)
 
-    bending: Continuous = utils.truncated_normal(mean=0.15, std=0.075, lower=0, upper=0.20)
-    arm_position: Continuous = utils.truncated_normal(mean=0.475, std=0.1, lower=0, upper=0.49)
+    bending: Continuous = utils.truncated_normal(0.1, 0.125, 0, 0.20)
+    arm_position: Continuous = utils.truncated_normal(mean=0.5, std=0.2, lower=0, upper=0.5)
     labeling_error: Discrete = utils.discrete({True: 0., False: 1.})
     obj_rotation_roll: Continuous = utils.truncated_normal(0, 0.03 * np.pi / 4,
                                                            *utils.QUARTER_CIRCLE)
@@ -101,6 +104,7 @@ class BlockySampler:
     bg_color: Continuous = scipy.stats.uniform(0.05, 0.90)
     bg_color_map: str = 'coolwarm'
     obj_color_map: str = 'coolwarm'
+
 
     def __post_init__(self):
         # TODO: remove this as, I think self.ill_chars doesn't need to be initialized here, since num_ill_chars
@@ -143,7 +147,7 @@ class BlockySampler:
         self.sample_labeling_error(params)  
         self.sample_main_spherical(params)
         self.sample_sec_spherical(params)
-        self.sample_sec_bones(params)
+        self.sample_num_sec_bones(params)
         self.sample_bending(params)
         self.sample_arm_position(params)
         self.sample_rotation(params)
@@ -232,12 +236,9 @@ class BlockySampler:
         obj_name = self._sample_name() if intervention else params.obj_name
         num_ill_chars = params.num_ill_chars
 
-        assert num_ill_chars < 2 if obj_name == 'healthy' else num_ill_chars <= 3, f'Invalid number of ill characteristics, {num_ill_chars} for the given obj_name {obj_name}'
+        assert num_ill_chars < 1 if obj_name == 'healthy' else num_ill_chars == 1, f'Invalid number of ill characteristics, {num_ill_chars} for the given obj_name {obj_name}'
 
-        values = list(self.ill_markers.keys())
-        probs = list(self.ill_markers.values())
-        char_sampler = utils.multiple_choice(values=values, probs=probs, size=num_ill_chars)
-        
+        char_sampler = utils.multiple_choice(values=list(self.ill_markers.keys()), probs=list(self.ill_markers.values()), size=num_ill_chars)
         ill_chars = tuple(char_sampler().tolist())
         params.ill_chars = ill_chars
 
@@ -253,7 +254,7 @@ class BlockySampler:
         """
         obj_name = self._sample_name() if intervention else params.obj_name
 
-        mutation_dist = utils.truncated_normal(1.15, 0.025, 1.11, 1.22)
+        mutation_dist = utils.truncated_normal(1.125, 0.025, 1.11, 1.22)
         dist = mutation_dist if 'mutation_mainbones' in params.ill_chars else self.main_spherical
         params.main_spherical = self._sample(obj_name, dist)
         params.mark_sampled('main_spherical')
@@ -268,7 +269,7 @@ class BlockySampler:
         """
         obj_name = self._sample_name() if intervention else params.obj_name
 
-        high_sphere_dist = utils.truncated_normal(mean=0.55, std=0.1, lower=0.50, upper=0.75)
+        high_sphere_dist = utils.truncated_normal(.60, .1, .50, .75)
 
         dist = high_sphere_dist if 'high_sphere_diff' in params.ill_chars else self.sec_spherical
 
@@ -303,7 +304,7 @@ class BlockySampler:
 
         obj_name = self._sample_name() if intervention else params.obj_name
 
-        high_bend_dist = utils.truncated_normal(mean=0.25, std=0.075, lower=0.20, upper=0.3926)
+        high_bend_dist = utils.truncated_normal(0.275, 0.05, 0.20, 0.39)
 
         dist = high_bend_dist if 'high_bend' in params.ill_chars else self.bending
         params.bending = self._sample(obj_name, dist)
@@ -318,8 +319,9 @@ class BlockySampler:
         """
         obj_name = self._sample_name() if intervention else params.obj_name
 
-        stretchy_dist = utils.truncated_normal(mean=0.525, std=0.1, lower=0.51, upper=1.0)
+        stretchy_dist = utils.truncated_normal(mean=0.75, std=0.1, lower=0.5, upper=1.0)
         dist = stretchy_dist if 'stretchy' in params.ill_chars else self.arm_position
+
         params.arm_position = self._sample(obj_name, dist)
         params.mark_sampled('arm_position')
 
@@ -452,10 +454,22 @@ class BlockySampler:
         params.mark_sampled('bg_color')
 
 @dataclasses.dataclass()
-class BlockyHighVarSampler(BlockySampler):
-    """ Base Sampler for Sick Ones dataset with a bend biases for the Ill class, and high variation 
-        in rotation to make it slightly more difficult.  
+class HighSphereDiffBlockySampler(BlockySampler):
     """
-    obj_rotation_roll: Continuous = scipy.stats.uniform(- np.pi / 4, 2 * np.pi / 4)
-    obj_rotation_yaw: Continuous = scipy.stats.uniform(- np.pi * 0.75, np.pi * 0.75)
-    obj_rotation_pitch: Continuous = scipy.stats.uniform(- np.pi / 4, 2 * np.pi / 4)
+    A sampler that samples blockies with only one ill characteristic: high_sphere_diff
+    """
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'high_sphere_diff': 1.0})
+
+@dataclasses.dataclass()
+class MutationMainBonesBlockySampler(BlockySampler):
+    """
+    A sampler that samples blockies with only one ill characteristic: mutation_mainbones
+    """
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'mutation_mainbones': 1.0})
+
+@dataclasses.dataclass()
+class StretchyBlockySampler(BlockySampler):
+    """
+    A sampler that samples blockies with only one ill characteristic: stretchy
+    """
+    ill_markers: dict = dataclasses.field(default_factory=lambda: {'stretchy': 1.0})

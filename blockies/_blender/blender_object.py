@@ -353,7 +353,7 @@ class Two4TwoBlenderObject():
                        amount: float,
                        amount2: float,
                        clamp_overlap: bool = True,
-                       num_diff: int = 2):
+                       secondary_bones: tuple = (0, 0, 1)):
         """Make the squares more round."""
         # TODO(philpp): do you know where this equation comes from?
         width = 0.05 + self.cube_size * 0.25 * amount
@@ -363,10 +363,13 @@ class Two4TwoBlenderObject():
         cube_size2 = cube_size_mod + amount2 * 0.1
         width2 = 0.05 + cube_size2 * width_mod * amount2
 
-        diff_blocks = random.sample(range(8), num_diff)
+        # diff_blocks = random.sample(range(8), num_diff)
+        possible_sec_bones = ['spine_left', 'spine_left_center','spine_right_center']
+        sec_bones_names = [possible_sec_bones[i] for i in secondary_bones]
 
         for i, name in enumerate(self.blocks):
-            if i not in diff_blocks:
+            if name not in sec_bones_names:
+                print('not a secondary bone:', name)
                 # use normal parameters for these
                 block = butils.set_active(name)
                 bpy.ops.object.modifier_add(type='BEVEL')
@@ -376,6 +379,7 @@ class Two4TwoBlenderObject():
                 block.modifiers['Subdivision'].render_levels = 5
                 bpy.ops.object.modifier_apply()
             else:
+                print(name)
                 # use modified width for these blocks
                 block = butils.set_active(name)
                 bpy.ops.object.modifier_add(type='BEVEL')
@@ -392,10 +396,10 @@ class Two4TwoBlenderObject():
 
     def __init__(self,
                  obj_name: str,
-                 spherical: float = 0,
-                 ill_spherical: float = 0,
+                 main_spherical: float = 0,
+                 sec_spherical: float = 0,
                  arm_position: float = 0,
-                 num_diff: int = 2):
+                 secondary_bones: str = '001'):
 
         # Object Type. 'peaky' or 'stretchy'
         self.obj_name = obj_name
@@ -404,9 +408,11 @@ class Two4TwoBlenderObject():
         self.blocks: Dict[str, bpy.types.Object] = {}
         self.num_of_cubes = 8
         base_width = 0.8
-        self.cube_size = base_width + spherical * 0.1
+        self.cube_size = base_width + main_spherical * 0.1
 
+        # parse string to list of integers indicating bone indexes
+        secondary_bones = [i for i, x in enumerate(secondary_bones) if x == '1']
         self._create_model()
         self._create_armature()
         self.center()
-        self._set_spherical(amount=spherical, amount2=ill_spherical, num_diff=num_diff)
+        self._set_spherical(amount=main_spherical, amount2=sec_spherical, secondary_bones=secondary_bones)

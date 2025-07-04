@@ -1,0 +1,59 @@
+[default_ds]
+# Class of the sampler. Must be of the form "your.module.YourSampler".
+# The module must be importable from the current enviroment.
+sampler = 'blockies.blocky_bias.BlockySampler'
+
+# Save dataset to this directory.
+output_dir = '/data/blockies_datasets/blockies/default'
+
+# Should be an existing output_dir be overwritten? [Default: false]
+force_overwrite = true
+
+# Number of concurrent processes.
+n_processes = 6
+
+# Should blender be downloaded? [Default: false]
+download_blender = true
+
+# Should the blender output be printed? [Default: false]
+ debug = false
+
+# creates new dataset split names `train`.
+[default_ds.train]
+n_samples = 40000
+
+[default_ds.test]
+n_samples = 2000
+
+[default_ds.validation]
+n_samples = 1000
+
+[default_ds.xai]
+n_samples = 100
+
+[highvar_ds]
+# Class of the sampler. Must be of the form "your.module.YourSampler".
+# The module must be importable from the current enviroment.
+sampler = 'blockies.blocky_bias.BlockyHighVarSampler'
+
+# Save dataset to this directory.
+output_dir = '/data/blockies_datasets/blockies/highvar'
+
+# Should be an existing output_dir be overwritten? [Default: false]
+force_overwrite = true
+
+# Number of concurrent processes.
+n_processes = 6
+
+# Should blender be downloaded? [Default: false]
+download_blender = true
+
+# Should the blender output be printed? [Default: false]
+ debug = false
+
+# creates new dataset split names
+[highvar_ds.test]
+n_samples = 2000
+
+[highvar_ds.xai]
+n_samples = 100
