@@ -1,4 +1,4 @@
-"""This module contains the code to sample ``two4two.SceneParameters``."""
+"""This module contains the code to sample ``blockies.SceneParameters``."""
 
 from __future__ import annotations
 

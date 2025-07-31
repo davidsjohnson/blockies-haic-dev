@@ -1,5 +1,4 @@
-"""This module contains classes to sample and describes individual scenes 
-for the Blockies variation of Two4Two."""
+"""SceneParameters module."""
 
 from __future__ import annotations
 

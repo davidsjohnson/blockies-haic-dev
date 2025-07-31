@@ -1,4 +1,4 @@
-"""two4two module."""
+"""blockies module."""
 
 __pdoc__ = {
     '_blender': False,
