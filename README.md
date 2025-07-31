@@ -47,4 +47,6 @@ blockies_render_dataset config/color_spher_bias.toml
 ```
 
 ## AAAI26 - Submission
-The sampler and scene parameter used to generate the dataset used in the AAAI submission are available in the folder `aaai26`.
+The sampler and scene parameters used to generate the dataset for the AAAI26 submission are available in the `blockies/aaai26` directory.
+
+Code for downloading and reviewing the datasets can be found in the `aaai26` folder. A Jupyter notebook is also included to review the selection of the datasets for the user study.
