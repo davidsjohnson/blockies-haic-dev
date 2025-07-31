@@ -1,0 +1,52 @@
+[no_variation_trainval]
+# Class of the sampler. Must be of the form "your.module.YourSampler".
+# The module must be importable from the current enviroment.
+sampler = 'two4two.ijcai25.blockies_bias.Sampler'
+
+# Save dataset to this directory.
+output_dir = 'two4two_datasets/blockies_v3_2class_normal'
+
+# Should be an existing output_dir be overwritten? [Default: false]
+force_overwrite = true
+
+# Number of concurrent processes.
+n_processes = 6
+
+# Should blender be downloaded? [Default: false]
+download_blender = false
+
+# Should the blender output be printed? [Default: false]
+debug = false
+
+# creates new dataset split names `train`.
+[no_variation_trainval.train]
+n_samples = 40000
+
+[no_variation_trainval.validation]    
+n_samples = 1000
+
+[no_variation_trainval.test]    
+n_samples = 3000
+
+[variation_test]
+# Class of the sampler. Must be of the form "your.module.YourSampler".
+# The module must be importable from the current enviroment.
+sampler = 'two4two.ijcai25.blockies_bias.HighVariationSampler'
+
+# Save dataset to this directory.
+output_dir = 'two4two_datasets/blockies_v3_2class_variation'
+
+# Should be an existing output_dir be overwritten? [Default: false]
+force_overwrite = true
+
+# Number of concurrent processes.
+n_processes = 6
+
+# Should blender be downloaded? [Default: false]
+download_blender = false
+
+# Should the blender output be printed? [Default: false]
+debug = false
+
+[variation_test.test]
+n_samples = 3000
