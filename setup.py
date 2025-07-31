@@ -8,13 +8,13 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="blockies",
     version="0.0.1",
-    author="David Johnson",
-    author_email="david.johnson@techfak.uni-bielefeld.de",
+    author="Anonymous",
+    author_email="anonymous@domain.com",
     description="Generate diagnostic based dataset for application-grounded assessment of human-ai collaboration.",
     license='MIT',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/davidsjohnson/blockies-haic",
+    url="https://anonymous.com",
     packages=setuptools.find_packages(),
     package_data={
         "": ["*.sh"],
