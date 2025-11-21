@@ -3,8 +3,17 @@ get-pip.py
 blender/
 blockies_datasets
 z_blockies_datasets_archive/
-*.tar.gz
+tmp/
 
+# asset files
+*.png
+*.jpg
+*.jpeg
+*.csv
+*.zip
+*.tar.gz
+*.jsonl
+*.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
