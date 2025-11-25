@@ -1,4 +1,4 @@
-"""setup module of two4two."""
+"""setup module of blockies."""
 
 import setuptools
 
@@ -8,8 +8,8 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="blockies",
     version="0.0.1",
-    author="David S. Johnson",
-    author_email="djohnson@techfak.uni-bielefeld.de",
+    author="David Johnson",
+    author_email="david.johnson@techfak.uni-bielefeld.de",
     description="Generate diagnostic based dataset for application-grounded assessment of human-ai collaboration.",
     license='MIT',
     long_description=long_description,
@@ -18,7 +18,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     package_data={
         "": ["*.sh"],
-        "two4two": ["py.typed"],
+        "blockies": ["py.typed"],
     },
     entry_points={
         'console_scripts': [
