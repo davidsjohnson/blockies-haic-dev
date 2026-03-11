@@ -15,6 +15,10 @@ tmp/
 *.jsonl
 *.pth
 
+# model files
+*.pth
+*.joblib
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
