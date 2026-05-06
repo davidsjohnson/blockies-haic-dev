@@ -1,5 +1,12 @@
 # Blockies: An application-grounded framework for assessing healthy trust in high-stakes human-AI collaboration
 
+> [!NOTE]
+> This repository is no longer actively maintained.
+>
+> It was the original development repository for **Blockies**. For the latest version, documentation, and ongoing development, please use the active repository:
+>
+> **https://github.com/davidsjohnson/blockies-haic**
+
 ## Introduction
 **Blockies** is a parametric dataset generator to create images for simulated diagnostic tasks that can be used for assessing human-AI collaboration tools. It extends the approach of the [Two4Two library](https://github.com/mschuessler/two4two), which uses arm position as the only class discriminator, to include multiple customizable traits that can be used as symptoms for the diagnosis of an illness in Blockies called *OCDegen*. This affords human-ai collaboration researchers a more challenging task for high-stakes decision-making.
 
@@ -27,43 +34,3 @@ To understand the inspiration behind **Blockies**, full details on the original 
     url={https://openreview.net/forum?id=v6s3HVjPerv}
 }
 ```
-
-## Installation
-If you want to generate your own data, follow these instructions.
-Currently, this project is not available through pip but has to be installed manually.
-
-Download this repository:
-
-```git
-git clone https://github.com/davidsjohnson/blockies-haic.git
-
-```
-
-We suggest creating a python3 or conda environment instead of using your system python.
-
-```
-python3 -m venv ~/blockies_enviroment
-source ~/blockies_enviroment/bin/activate
-```
-
-To install the **minimal installation** blockies-haic package change into the cloned directory and run setuptools.
-
-```
-cd blockies-haic
-pip install .
-```
-
-To install the **installation including all requirements for generating your own training data** run:
-```
-pip install .[example_notebooks_data_generation]
-```
-
-To generate the default dataset on your own use the following commands:
-```
-blockies_render_dataset config/color_spher_bias.toml
-```
-
-## IJCAI25 - Submission
-Jupyter Notebooks to replicate and review the dataset and model used in the IJCAI submission are available in the folder `ijcai25`.  The notebooks also act as examples for working with an existing **Blockies** dataset.  
-
-You can also generate the dataset yourself using the config file: `ijcai25_blockies.toml`.
